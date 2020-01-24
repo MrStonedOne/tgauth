@@ -36,9 +36,6 @@
 			$sql = "DELETE FROM `byond_oauth_tokens` WHERE token = '".$db->sql_escape($token)."' OR timestamp < DATE_SUB(CURDATE(),INTERVAL 5 MINUTE)";
 			$db->sql_freeresult($db->sql_query($sql));
 			
-			$sql = "DELETE FROM `byond_oauth_redirects` WHERE userid = ".$userid." OR timestamp < DATE_SUB(CURDATE(),INTERVAL 30 MINUTE)";
-			$db->sql_freeresult($db->sql_query($sql));
-			
 			$bannedusernames = array();
 			
 			$sql = "SELECT u.username AS username FROM `phpbb_banlist` AS b LEFT JOIN `phpbb_profile_fields_data` AS f ON (b.ban_userid = f.user_id) LEFT JOIN `phpbb_users` AS u on (u.user_id = b.ban_userid) WHERE b.ban_userid > 0 AND f.pf_byond_username IS NOT NULL AND ban_exclude <= 0 AND (ban_end = 0 OR ban_end > UNIX_TIMESTAMP()) AND f.pf_byond_username = '".$db->sql_escape($key)."'";
@@ -67,15 +64,6 @@
 			die();
 		}
 		if (isset($_GET['go'])) {
-			$redirect = '';
-			if (isset($_GET['redirect']))
-				$redirect = $_GET['redirect'];
-			if (empty($redirect) || !$redirect)
-				$redirect = "memberlist.php?mode=viewprofile&u=".$userid;
-			
-			$sql = "INSERT INTO byond_oauth_redirects (userid,redirect) VALUES (".$userid.", '".$db->sql_escape($redirect)."') ON DUPLICATE KEY UPDATE redirect='".$db->sql_escape($redirect)."'";
-			$db->sql_freeresult($db->sql_query($sql));
-			
 			header("location: https://secure.byond.com/login.cgi?login=1;noscript=1;url=".urlencode("http://www.byond.com/play/byondoauth.tgstation13.org:31337"));
 			die();
 		}
