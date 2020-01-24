@@ -1,0 +1,5 @@
+<body>
+	<div id=main byondclass=child skinparams="left:map;right:output;splitter:50">
+		<div id=output byondclass=output></div>
+	</div>
+</body>
