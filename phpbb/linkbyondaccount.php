@@ -38,7 +38,7 @@
 			
 			$bannedusernames = array();
 			
-			$sql = "SELECT u.username AS username FROM `phpbb_banlist` AS b LEFT JOIN `phpbb_profile_fields_data` AS f ON (b.ban_userid = f.user_id) LEFT JOIN `phpbb_users` AS u on (u.user_id = b.ban_userid) WHERE b.ban_userid > 0 AND f.pf_byond_username IS NOT NULL AND ban_exclude <= 0 AND (ban_end = 0 OR ban_end > UNIX_TIMESTAMP()) AND f.pf_byond_username = '".$db->sql_escape($key)."'";
+			$sql = "SELECT u.username AS username FROM `".BANLIST_TABLE."` AS b LEFT JOIN `".PROFILE_FIELDS_DATA_TABLE."` AS f ON (b.ban_userid = f.user_id) LEFT JOIN `phpbb_users` AS u on (u.user_id = b.ban_userid) WHERE b.ban_userid > 0 AND f.pf_byond_username IS NOT NULL AND ban_exclude <= 0 AND (ban_end = 0 OR ban_end > UNIX_TIMESTAMP()) AND f.pf_byond_username = '".$db->sql_escape($key)."'";
 			$result = $db->sql_query($sql);
 			while ($row = $db->sql_fetchrow($result))
 				$bannedusernames[] = $row['username'];
@@ -51,10 +51,10 @@
 				die();
 			}
 			
-			$sql = "INSERT INTO phpbb_profile_fields_data (user_id,pf_byond_username) VALUES (".$userid.", '".$db->sql_escape($key)."') ON DUPLICATE KEY UPDATE pf_byond_username='".$db->sql_escape($key)."'";
+			$sql = "INSERT INTO ".PROFILE_FIELDS_DATA_TABLE." (user_id,pf_byond_username) VALUES (".$userid.", '".$db->sql_escape($key)."') ON DUPLICATE KEY UPDATE pf_byond_username='".$db->sql_escape($key)."'";
 			$db->sql_freeresult($db->sql_query($sql));
 			
-			$sql = "INSERT INTO phpbb_user_group (group_id,user_id,user_pending) VALUES (11, ".$userid.", 0) ON DUPLICATE KEY UPDATE user_pending=0";
+			$sql = "INSERT INTO ".USER_GROUP_TABLE." (group_id,user_id,user_pending) VALUES (11, ".$userid.", 0) ON DUPLICATE KEY UPDATE user_pending=0";
 			$db->sql_freeresult($db->sql_query($sql));
 			
 			$auth->acl_clear_prefetch($userid);
